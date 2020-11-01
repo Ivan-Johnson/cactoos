@@ -30,6 +30,7 @@ import org.cactoos.func.FallbackFrom;
 import org.cactoos.iterable.IterableOf;
 import org.junit.Test;
 import org.llorllale.cactoos.matchers.Assertion;
+import org.llorllale.cactoos.matchers.IsTrue;
 import org.llorllale.cactoos.matchers.ScalarHasValue;
 
 /**
@@ -154,7 +155,15 @@ public final class ScalarWithFallbackTest {
                 new IterableOf<>(
                     new FallbackFrom<>(
                         new IterableOf<>(InterruptedException.class),
-                        exp -> message
+                        exp -> {
+                            final boolean status = Thread.interrupted();
+                            new Assertion<>(
+                                "Interrupt status must be true in fallback from InterruptedException",
+                                status,
+                                new IsTrue()
+                            ).affirm();
+                            return message;
+                        }
                     )
                 )
             ),

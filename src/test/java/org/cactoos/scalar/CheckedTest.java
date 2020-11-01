@@ -28,6 +28,8 @@ import java.io.IOException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.llorllale.cactoos.matchers.Assertion;
+import org.llorllale.cactoos.matchers.IsTrue;
 
 /**
  * Test case for {@link Checked}.
@@ -52,7 +54,15 @@ public final class CheckedTest {
             () -> {
                 throw new InterruptedException("interrupt");
             },
-            IOException::new
+            (Exception e) -> {
+                final boolean status = Thread.interrupted();
+                new Assertion<>(
+                    "Interrupt status must be true when wrapping an InterruptedException",
+                    status,
+                    new IsTrue()
+                ).affirm();
+                return new IOException(e);
+            }
         ).value();
     }
 

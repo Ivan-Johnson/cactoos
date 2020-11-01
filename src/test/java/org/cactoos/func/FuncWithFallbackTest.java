@@ -30,6 +30,7 @@ import org.cactoos.iterable.IterableOf;
 import org.junit.Test;
 import org.llorllale.cactoos.matchers.Assertion;
 import org.llorllale.cactoos.matchers.FuncApplies;
+import org.llorllale.cactoos.matchers.IsTrue;
 
 /**
  * Test case for {@link FuncWithFallback}.
@@ -83,7 +84,15 @@ public final class FuncWithFallbackTest {
                         "Failure with InterruptedException"
                     );
                 },
-                new FallbackFrom<>(InterruptedException.class, exp -> expected)
+                new FallbackFrom<>(InterruptedException.class, exp -> {
+                    final boolean status = Thread.interrupted();
+                    new Assertion<>(
+                        "Interrupt status must be true in fallback from InterruptedException",
+                        status,
+                        new IsTrue()
+                    ).affirm();
+                    return expected;
+                })
             ),
             new FuncApplies<>(1, expected)
         ).affirm();

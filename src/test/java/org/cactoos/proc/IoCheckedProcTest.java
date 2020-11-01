@@ -27,6 +27,7 @@ import java.io.IOException;
 import org.cactoos.Proc;
 import org.junit.jupiter.api.Test;
 import org.llorllale.cactoos.matchers.Assertion;
+import org.llorllale.cactoos.matchers.IsTrue;
 import org.llorllale.cactoos.matchers.Throws;
 
 /**
@@ -66,6 +67,13 @@ final class IoCheckedProcTest {
                 return null;
             },
             new Throws<>(IOException.class)
+        ).affirm();
+
+        final boolean status = Thread.interrupted();
+        new Assertion<>(
+            "Interrupt status must be preserved",
+            status,
+            new IsTrue()
         ).affirm();
     }
 
